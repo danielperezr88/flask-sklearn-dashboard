@@ -1,0 +1,36 @@
+{% extends "index.html" %}{% set headerized_class = 'non-headerized' %}
+{% block breadcrumbs %}
+  <span onclick="window.location.href='/login'">Go to Login</span>
+{% endblock %}
+{% block body %}
+  <h1>Not so fast, buccaneer...</h1>
+  <p>This is not the page you are looking for.</p>
+  <p><a href="{{ url_for('index') }}">Go somewhere nice</a></p>
+{% endblock %}
+{% block footer_extra %}
+  <script>
+
+    var interval = Math.floor(1000 / 60 * 10);
+    var resizeTimer;
+    var wrapper = $('#form-inner-wrapper');
+
+    function wrapper_resize() {
+      wrapper.css('width', Math.max.apply(null, [270,parseInt(3*$(window).width()/4)]));
+    }
+
+    $(document).ready(function(){
+
+      window.addEventListener('resize', function (event) {
+        if (resizeTimer !== false) {
+          clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function () {
+          wrapper_resize();
+        }, interval);
+      });
+
+      wrapper_resize();
+
+    });
+  </script>
+{% endblock %}

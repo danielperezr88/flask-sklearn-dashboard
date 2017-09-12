@@ -1,0 +1,39 @@
+{% extends "index.html" %}{% set headerized_class = 'non-headerized' %}
+{% block breadcrumbs %}
+  <span onclick="window.location.href='/index'">Dashboards</span><nobr>></nobr>
+  <span onclick="window.location.href='/about'">About us</span>
+{% endblock %}
+{% block body %}
+  <h3>About us:</h3>
+  <p>This tool is offered by Human-Forecast ™.</p>
+  <!--<br/>-->
+  <p>Our primary objective is to help companies leveraging its processes by updating to the new paradigm of data-driven decision making.</p>
+  <!--<br/>-->
+  <p>We do this by developing big data/machine learning solutions for process automation, data introspection and knowledge management.</p>
+{% endblock %}
+{% block footer_extra %}
+  <script>
+
+    var interval = Math.floor(1000 / 60 * 10);
+    var resizeTimer;
+    var wrapper = $('#form-inner-wrapper');
+    function wrapper_resize() {
+      wrapper.css('width', Math.max.apply(null, [270,parseInt($(window).width()/2)]));
+    }
+
+    $(document).ready(function(){
+      window.addEventListener('resize', function (event) {
+        if (resizeTimer !== false) {
+          clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function () {
+          wrapper_resize();
+        }, interval);
+      });
+
+      wrapper_resize()
+
+    });
+
+  </script>
+{% endblock %}

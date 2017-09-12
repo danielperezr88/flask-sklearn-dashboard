@@ -1,0 +1,194 @@
+{% extends "main_template.html" %}
+{% block content %}
+  <header>
+    <img src="" style="float: right;height: 46px;padding: 21px 21px 0 0;">
+    <ul id="header-nav">
+      <li>
+        <a href="{% if session.logged_in %}index{% else %}login{% endif %}" id="head-main">
+          <h1>Smart Agro Classifier</h1>
+          <p>for terrain use optimization</p>
+        </a>
+      </li>
+      <li>
+        <ul id="nav">
+          {% if not session.logged_in %}
+            <li><a href="{{ url_for('login') }}">Login</a>
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+          {% else %}
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('logout') }}">Log out</a></li>
+          {% endif %}
+        </ul>
+      </li>
+      <li id="more-wrapper">
+        <b><a href="#">&#xF0C9;</a></b>
+        <ul id="more-nav">
+          <li>
+            <ul class="subfilter"></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </header>
+  <div id="flash-msg">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash{{ ' '+category }}"><a class="flash-message-closer" href="#" onclick="$(this).hide(400).parents('.flash').slideUp(400,function(){$(this).remove();});">&#xF05C;</a>{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+  <div id="content">
+    <div id="form-outer-wrapper">
+      <div id="form-inner-wrapper">
+        <div id="breadcrumbs" class="{{ headerized_class or "headerized" }}">
+          {% block breadcrumbs %}
+            <span onclick="window.location.href='/index'">Smart Agro Classifier</span><nobr>></nobr>
+            <span onclick="window.location.href='/index'">index</span>
+          {% endblock %}
+        </div>
+        {% if headerized_class == 'headerized' %}
+          <div id="header">
+            <h4>Filters</h4>
+            {% for filter in filters %}
+              <p>
+                {{ filter['name'] }} :
+                  {% if filter['type'] == "select" %}
+                    <select name="{{ filter['id'] }}" onChange="{{ filter['onchange'] }}">
+                      {% for option in filter['options'] %}
+                        <option value="{{ option['value'] }}"{% if option['default'] == True %} selected{% endif %}>{{ option['name'] }}</option>
+                      {% endfor %}
+                    </select>
+                  {% endif %}
+              </p>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block body %}
+          <!--<svg width="960" height="500"></svg>-->
+          {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+          <form action="index" method="post">
+          <dl>
+            {% for input in inputs %}
+              <dt><label for="{{ input['id'] }}">{{ input['label'] or input['name'] }}:</label></dt>
+              {% if input['type'] != 'select' %}
+                <dd><input{% for attr, val in input.items() %} {{ attr }}="{{ val }}"{% endfor %}></dd>
+              {% else %}
+                <dd>
+                  <select{% for attr, val in input.items() %}{% if attr != 'options' %} {{ attr }}="{{ val }}"{% endif %}{% endfor %}>
+                    {% for opt in input['options'] %}
+                      <option{% for attr, val in opt.items() %}{% if attr != 'options' %} {{ attr }}="{{ val }}"{% endif %}{% endfor %}>{{ opt['name'] }}</option>
+                    {% endfor %}
+                  </select>
+                </dd>
+              {% endif %}
+            {% endfor %}
+            <dd><input type="submit" value="Predict"></dd>
+          </dl>
+          </form>
+          {% if result %}
+              <div id="results">
+                <h3>{{ cls_info['names'][result[0]] }}</h3>
+                <img src="{{ url_for('model', filename=cls_info['images'][result[0]]) }}">
+                <p>{{ cls_info['descriptions'][result[0]] }}</p>
+              </div>
+          {% endif %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+  {% block footer_extra %}
+    <script src="{{ url_for('static', filename='js/d3/Slider.js') }}"></script>
+    <script type="text/javascript" charset="utf-8">
+
+      function generateObject(keys,values) {
+        var rv = {};
+        for (var i = 0; i < keys.length; ++i)
+          rv[keys[i]] = values[i];
+        return rv;
+      }
+
+      var color_array = [
+        "#da4480", "#5ab449", "#7f5acd", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+        "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
+      ];
+
+      var interval = Math.floor(1000 / 60 * 10);
+      var resizeTimer;
+      var isFirstLoad = true;
+
+      var s1 = slider();
+      s1.value(1.);
+
+      function render(){
+
+          var height = parseInt($('#form-inner-wrapper').css('height'));
+          var width = $(window).width()-30;
+          var innerRadius = Math.min.apply(null,[height,$(window).width()])/2 - 100;
+          var outerRadius = innerRadius + 10;
+
+          $('#form-inner-wrapper').css('width', width);
+
+          var svg = d3.select("svg"),
+            margin = {right: 50, left: 50},
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height");
+          var x = d3.scaleLinear()
+            .domain([0, 180])
+            .range([0, width])
+            .clamp(true);
+          var slider = svg.call(s1);
+          slider.transition() // Gratuitous intro!
+            .duration(750)
+            .tween("hue", function() {
+              var i = d3.interpolate(0, 70);
+              return function(t) { hue(i(t)); };
+            });
+          function hue(h) {
+            handle.attr("cx", x(h));
+            svg.style("background-color", d3.hsl(h, 0.8, 0.8));
+          }
+          /*
+          d3.json("", function (error, data) {
+
+              if (error) throw error;
+
+              var last = d3.select('#form-inner-wrapper')._groups[0][0].lastChild;
+              if (last != null && !isFirstLoad) {
+                  last.remove();
+              }
+              isFirstLoad = false;
+
+              function sort(a,b){ return d3.ascending(data.concepts.indexOf(a),data.concepts.indexOf(b)); }
+              var colors = generateObject(data.concepts,color_array);
+
+              var svg = d3.select('#form-inner-wrapper')
+                      .classed('svg-container', true)
+                      .append("svg")
+                      .classed("svg-content-responsive", true)
+                      .attr("viewBox", "0 0 " + width + " " + height)
+                      .attr("preserveAspectRatio", "xMinYMin meet");
+                      //.attr("height", height).attr("width", width);
+
+          });
+          */
+      }
+
+      $(document).ready(function() {
+
+        render();
+
+        window.addEventListener('resize', function (event) {
+          if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+          }
+          resizeTimer = setTimeout(function () {
+            render()
+          }, interval);
+        });
+
+      });
+    </script>
+  {% endblock %}
+{% endblock %}
