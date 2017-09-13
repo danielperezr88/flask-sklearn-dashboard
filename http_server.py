@@ -43,7 +43,7 @@ def generate_url(host, protocol='http', port=80, directory=''):
 
 
 def run():
-    flask_options = dict(port=PORT, host='0.0.0.0')
+    flask_options = dict(port=PORT, host='0.0.0.0', debug=True)
     app.secret_key = hexlify(urandom(24))#hexlify(bytes('development_', encoding='latin-1'))
     app.run(**flask_options)
 
@@ -86,13 +86,42 @@ def index():
     else:
         cls_info = None
 
-    result = mdl.predict(pd.DataFrame(dict(request.form))) if (mdl is not None and len(request.form) > 0) else None
+    df = None
+    if len(request.form) > 0:
+        df = pd.DataFrame(dict(request.form))
+
+        for c in [c for c in df.columns if c != 'onehot']:
+            if df[c].dtype == 'object':
+                df[c] = int(df[c].as_matrix()[0])
+
+        if 'onehot' in df.columns:
+            onehot_encoded = df['onehot'][0].split(',')
+            for field in onehot_encoded:
+                vopts = [i for i in inputs if (i['id'] == field if 'id' in i else False)][0]['options']
+                vopts = [o['value'] for o in vopts]
+                vmin, vmax = min(vopts), max(vopts)
+                for n in range(vmax-vmin + 1):
+                    df[field+str(n)] = pd.np.any(df[field] == n)
+
+                df.drop([field], axis=1, inplace=True)
+            df.drop(['onehot'], axis=1, inplace=True)
+
+    result = mdl.predict(df) if (mdl is not None and df is not None) else None
+    result_name = (cls_info['names'][result[0]] if result[0] in cls_info else cls_info['names'][str(result[0])]) \
+        if result is not None else None
+    result_img = (cls_info['images'][result[0]] if result[0] in cls_info else cls_info['images'][str(result[0])]) \
+        if result is not None else None
+    result_descr = (cls_info['descriptions'][result[0]] if result[0] in cls_info
+                    else cls_info['descriptions'][str(result[0])]) \
+        if result is not None else None
+    print(cls_info)
 
     return render_template('index.html',
-                           headerized_class="headerized",
+                           headerized_class="non-headerized",
                            inputs=inputs,
-                           result=result,
-                           cls_info=cls_info
+                           result_name=result_name,
+                           result_img=result_img,
+                           result_descr=result_descr
                            )
 
 

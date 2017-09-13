@@ -68,10 +68,19 @@
         {% block body %}
           <!--<svg width="960" height="500"></svg>-->
           {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+          {% if result_name or result_img or result_descr%}
+              <div id="results">
+                {% if result_name %}<h3>{{ result_name }}</h3>{% endif %}
+                {% if result_img %}<img src="{{ url_for('model', filename=result_img) }}">{% endif %}
+                {% if result_descr %}<p>{{ result_descr }}</p>{% endif %}
+              </div>
+          {% endif %}
           <form action="index" method="post">
           <dl>
             {% for input in inputs %}
+              {% if 'hidden' not in input %}
               <dt><label for="{{ input['id'] }}">{{ input['label'] or input['name'] }}:</label></dt>
+              {% endif %}
               {% if input['type'] != 'select' %}
                 <dd><input{% for attr, val in input.items() %} {{ attr }}="{{ val }}"{% endfor %}></dd>
               {% else %}
@@ -87,13 +96,6 @@
             <dd><input type="submit" value="Predict"></dd>
           </dl>
           </form>
-          {% if result %}
-              <div id="results">
-                <h3>{{ cls_info['names'][result[0]] }}</h3>
-                <img src="{{ url_for('model', filename=cls_info['images'][result[0]]) }}">
-                <p>{{ cls_info['descriptions'][result[0]] }}</p>
-              </div>
-          {% endif %}
         {% endblock %}
       </div>
     </div>
