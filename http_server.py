@@ -124,8 +124,8 @@ def index():
         for n in range(len(inputs)):
             if inputs[n]['name'] in to_rndmize:
                 istep = inputs[n]['step'] if 'step' in inputs[n] else 1
-                imin = inputs[n]['min'] if 'min' in inputs[n] else 1
-                imax = inputs[n]['max'] if 'max' in inputs[n] else 1
+                imin = inputs[n]['min'] if 'min' in inputs[n] else 0
+                imax = inputs[n]['max'] if 'max' in inputs[n] else 254
                 inputs[n]['value'] = int(pd.np.random.uniform(imin, imax + istep)/istep) * istep
 
     df = None
