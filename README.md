@@ -13,8 +13,8 @@ Dependencias
 * requests
 * redis
  
- Modo de uso
- -----------
+ Modo de uso (ejemplos en la carpeta "pickle_generation_scripts")
+ ----------------------------------------------------------------
  * Introducir en la carpeta "model", los archivos:
     - __model.pkl__ - pickle del modelo de scikit-learn a evaluar, generado con la función "dump" de joblib)
     - __classes_info.pkl__ - pickle para la visualización de los resultados con la siguiente estructura:
