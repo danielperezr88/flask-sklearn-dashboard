@@ -28,6 +28,6 @@ WORKDIR /app
 RUN git checkout agro && \
 	mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 80
+EXPOSE 88
 
 CMD ["/usr/bin/supervisord"]
