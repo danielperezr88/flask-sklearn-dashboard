@@ -5,13 +5,12 @@ import requests as req
 from hashlib import sha512
 from binascii import hexlify
 
-from os import path, getpid, urandom
-from glob import glob
+from os import path, getpid, urandom, makedirs
 import inspect
 
 import logging
 
-from utils import refresh_and_retrieve_module
+from utils import refresh_and_retrieve_module, BucketedFileRefresher
 
 from sklearn.externals import joblib
 import pandas as pd
@@ -19,6 +18,37 @@ import pickle
 
 __author__ = "Daniel Pérez"
 __email__ = "dperez@human-forecast.com"
+
+
+def refresh_and_retrieve_pickle(filename, bucket=None, subfolder=None, use_joblib=False):
+
+    try:
+
+        to_join = [path.dirname(path.realpath(__file__))]
+        to_join += [subfolder] if subfolder is not None else []
+        to_join += [filename]
+
+        filepath = path.join(*to_join)
+
+        if bucket is not None:
+            BFR(bucket, filename, filepath)
+
+        with open(filepath, 'rb') as fp:
+            if use_joblib:
+                return joblib.load(fp)
+            return pickle.load(fp)
+
+    except BaseException as ex:
+
+        msg = "Unable to access file \"%s\": Unreachable or unexistent bucket and file." % (filename,)
+        logging.error(msg)
+        raise ImportError(msg)
+
+    except FileNotFoundError as e:
+
+        msg = "Unable to access file \"%s\": Unreachable or unexistent bucket and file." % (filename,)
+        logging.error(msg)
+        raise ImportError(msg)
 
 
 def no_impostors_wanted(s):
@@ -43,7 +73,7 @@ def generate_url(host, protocol='http', port=80, directory=''):
 
 
 def run():
-    flask_options = dict(port=PORT, host='0.0.0.0', debug=True)
+    flask_options = dict(port=PORT, host='0.0.0.0')
     app.secret_key = hexlify(urandom(24))#hexlify(bytes('development_', encoding='latin-1'))
     app.run(**flask_options)
 
@@ -55,9 +85,14 @@ MY_IP = req.get(generate_url('jsonip.com')).json()['ip']
 PORT = 88
 
 ID_BUCKET = 'ids'
+MODEL_BUCKET = 'scikit-learn-models'
 
-with open(path.join('model','form_field.pkl'), 'rb') as fp:
-    inputs = pickle.load(fp)
+BFR = BucketedFileRefresher()
+
+model_folder = 'model'
+if not path.exists(model_folder):
+    makedirs(model_folder)
+
 
 @app.route('/model/<path:filename>')
 def model(filename):
@@ -76,23 +111,33 @@ def index():
     if (not session['logged_in']) if 'logged_in' in session.keys() else True:
         return redirect('/login')
 
-    mdl_p = path.join('model', 'model.pkl')
-    pkl_p = path.join('model', 'classes_info.pkl')
-    mdl = joblib.load(mdl_p) if path.exists(mdl_p) else None
+    mdl = refresh_and_retrieve_pickle('model.pkl', bucket=MODEL_BUCKET, subfolder=model_folder, use_joblib=True)
+    cls_info = refresh_and_retrieve_pickle('classes_info.pkl', bucket=MODEL_BUCKET, subfolder=model_folder)
+    inputs = refresh_and_retrieve_pickle('form_field.pkl', bucket=MODEL_BUCKET, subfolder=model_folder)
 
-    if path.exists(pkl_p):
-        with open(pkl_p, 'rb') as fp:
-            cls_info = pickle.load(fp)
-    else:
-        cls_info = None
+    for im in cls_info['images'].values():
+        BFR(MODEL_BUCKET, im, path.join(model_folder, im))
+
+    ipt_rnd = [i for i in inputs if i['name'] == 'random']
+    if len(ipt_rnd) > 0:
+        to_rndmize = ipt_rnd[0]['value'].split(',')
+        for n in range(len(inputs)):
+            if inputs[n]['name'] in to_rndmize:
+                istep = inputs[n]['step'] if 'step' in inputs[n] else 1
+                imin = inputs[n]['min'] if 'min' in inputs[n] else 1
+                imax = inputs[n]['max'] if 'max' in inputs[n] else 1
+                inputs[n]['value'] = int(pd.np.random.uniform(imin, imax + istep)/istep) * istep
 
     df = None
     if len(request.form) > 0:
         df = pd.DataFrame(dict(request.form))
 
-        for c in [c for c in df.columns if c != 'onehot']:
+        for c in [c for c in df.columns if c not in ['onehot', 'random']]:
             if df[c].dtype == 'object':
                 df[c] = int(df[c].as_matrix()[0])
+
+        if 'random' in df.columns:
+            df.drop(['random'], axis=1, inplace=True)
 
         if 'onehot' in df.columns:
             onehot_encoded = df['onehot'][0].split(',')
@@ -114,7 +159,6 @@ def index():
     result_descr = (cls_info['descriptions'][result[0]] if result[0] in cls_info
                     else cls_info['descriptions'][str(result[0])]) \
         if result is not None else None
-    print(cls_info)
 
     return render_template('index.html',
                            headerized_class="non-headerized",

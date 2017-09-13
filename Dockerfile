@@ -13,10 +13,19 @@ RUN curl -SL 'https://bootstrap.pypa.io/get-pip.py' | python2 \
 	&& patch -p1 < pip_shebang_patch.txt
 
 RUN pip2 install supervisor && \
-    pip2 install superlance==1.0.0
+    pip2 install superlance==1.0.0 && \
+    pip2 install --upgrade numpy && \
+    pip2 install --upgrade scipy
 
 RUN pip install --upgrade pip && \
 	pip install redis
+
+RUN git clone --recursive https://github.com/dmlc/xgboost.git && \
+    cd xgboost && \
+    make && \
+    cd python-package && \
+    python setup.py install && \
+    python2 setup.py install
 
 RUN mkdir -p /var/log/supervisor
 RUN mkdir /app
