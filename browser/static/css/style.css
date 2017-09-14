@@ -719,6 +719,10 @@ select{
     font: 11px OpenSans;
     margin: auto;
     padding-top: 1px;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    overflow: hidden !important;
+    white-space: nowrap;
 }
 
 button{
