@@ -35,4 +35,4 @@ RUN git checkout concrete
 
 EXPOSE 88
 
-CMD ["gunicorn -b 0.0.0.0:80 web:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:80", "web:app"]
