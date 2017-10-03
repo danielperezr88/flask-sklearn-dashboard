@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 from flask import Flask, render_template, redirect, url_for, g, abort, session, request, flash, send_from_directory
 import werkzeug.exceptions as ex
 
@@ -16,7 +18,7 @@ from sklearn.externals import joblib
 import pandas as pd
 import pickle
 
-__author__ = "Daniel PÃ©rez"
+__author__ = "Daniel Pérez"
 __email__ = "dperez@human-forecast.com"
 
 

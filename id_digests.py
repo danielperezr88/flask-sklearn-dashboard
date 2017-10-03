@@ -1,4 +1,5 @@
-# coding: utf-8
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 id_dict = {
     'dperez':   '207e42bc0dd6f5a017461fb73a4d5f849a4f2a26a2c2bfec37639e7fcced4fa2' +
                 '1a3e2130cfbd6eea7febdef8684b0526be9a222077d49e5499d0f51401a95326',
