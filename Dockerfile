@@ -1,5 +1,9 @@
 FROM heroku/miniconda
 
+RUN apt-get update && apt-get install -y \
+        python-dev \
+        build-essential
+
 RUN conda install scikit-learn numpy scipy
 
 ADD . /opt/webapp
