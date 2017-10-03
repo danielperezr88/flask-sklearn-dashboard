@@ -1,5 +1,8 @@
 gunicorn==19.7.1
 Flask==0.12
+numpy
 requests==2.18.4
+scikit-learn
 redis==2.10.5
 pandas==0.20.1
+scipy
