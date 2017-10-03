@@ -82,7 +82,7 @@ app = Flask(__name__, static_folder='browser/static', template_folder='browser/t
 app.config['model_folder'] = 'model'
 
 MY_IP = req.get(generate_url('jsonip.com')).json()['ip']
-PORT = 88
+PORT = 80
 
 ID_BUCKET = 'ids'
 MODEL_BUCKET = 'scikit-learn-models'

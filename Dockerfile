@@ -33,6 +33,6 @@ WORKDIR /app
 
 RUN git checkout concrete
 
-EXPOSE 88
+EXPOSE 80
 
-CMD ["gunicorn", "-b", "0.0.0.0:80", "web:app"]
+CMD gunicorn --bind 0.0.0.0:80 web:app
