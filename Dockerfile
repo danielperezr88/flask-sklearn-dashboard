@@ -18,4 +18,4 @@ RUN git clone --recursive https://github.com/dmlc/xgboost.git && \
     cd python-package && \
     python setup.py install
 
-CMD gunicorn --bind 0.0.0.0:80 web:app --log-file=-
+CMD gunicorn --bind 0.0.0.0:$PORT web:app --log-file=-
