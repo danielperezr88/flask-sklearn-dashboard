@@ -1,3 +1,4 @@
+gunicorn==19.7.1
 Flask==0.12
 numpy==1.12.1
 requests==2.18.4
