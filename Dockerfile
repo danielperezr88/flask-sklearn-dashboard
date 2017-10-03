@@ -2,6 +2,10 @@ FROM heroku/miniconda
 
 RUN conda install scikit-learn numpy scipy
 
+ADD . /opt/webapp
+
+WORKDIR /opt/webapp
+
 RUN pip install -qr requirements.txt
 
 RUN git clone --recursive https://github.com/dmlc/xgboost.git && \
