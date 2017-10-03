@@ -1,5 +1,5 @@
 Flask==0.12
-numpy==1.12.1+mkl
+numpy==1.12.1
 requests==2.18.4
 scikit-learn==0.18.1
 redis==2.10.5
