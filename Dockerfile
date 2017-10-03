@@ -35,4 +35,4 @@ RUN git checkout concrete
 
 EXPOSE 80
 
-CMD ["gunicorn","--bind=0.0.0.0:80","web:app"]
+CMD ["gunicorn","--bind=0.0.0.0:80","web:app","--log-file=-"]
