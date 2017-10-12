@@ -11,7 +11,7 @@ with open('../model/classes_info.pkl', 'wb') as fp:
             is_regressor=True,
             in_dtypes=[np.float32,np.float32,np.float32,np.float32,np.float32,np.float32,np.float32,np.float32],
             out_dtype=[np.float32],
-            result_text="La fuerza de compresión óptima es %s"
+            result_text="Optimal Compression force is %s (MPa)"
         ),
         fp
     )
