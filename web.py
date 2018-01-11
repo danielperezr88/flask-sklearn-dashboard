@@ -160,8 +160,14 @@ def index():
     result_name = result_img = result_descr = None
     if(not cls_info['is_regressor'] if 'is_regressor' in cls_info else True):
 
-        for im in cls_info['images'].values():
-            BFR(MODEL_BUCKET, im, path.join(model_folder, im))
+        if 'images' in cls_info:
+
+            image_folder = path.join(model_folder, 'images')
+            if not path.exists(image_folder):
+                os.makedirs(image_folder)
+
+            for im in cls_info['images'].values():
+                BFR(MODEL_BUCKET, im, path.join(image_folder, im))
 
         result_name = (cls_info['names'][result[0]] if result[0] in cls_info['names']
             else cls_info['names'][str(result[0])]) if result is not None else None
