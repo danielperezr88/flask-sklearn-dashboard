@@ -120,9 +120,6 @@ def index():
     cls_info = refresh_and_retrieve_pickle('classes_info.pkl', bucket=MODEL_BUCKET, subfolder=model_folder)
     inputs = refresh_and_retrieve_pickle('form_field.pkl', bucket=MODEL_BUCKET, subfolder=model_folder)
 
-    for im in cls_info['images'].values():
-        BFR(MODEL_BUCKET, im, path.join(model_folder, im))
-
     ipt_rnd = [i for i in inputs if i['name'] == 'random']
     if len(ipt_rnd) > 0:
         to_rndmize = ipt_rnd[0]['value'].split(',')
@@ -137,9 +134,11 @@ def index():
     if len(request.form) > 0:
         df = pd.DataFrame(dict(request.form))
 
-        for c in [c for c in df.columns if c not in ['onehot', 'random']]:
-            if df[c].dtype == 'object':
-                df[c] = int(df[c].as_matrix()[0])
+        for idx, c in enumerate([c for c in df.columns if c not in ['onehot', 'random']]):
+            if (idx < len(cls_info['in_dtypes'])) if 'in_dtypes' in cls_info else False:
+                df[c] = df[c].astype({c:cls_info['in_dtypes'][idx]}).as_matrix()[0]
+            elif df[c].dtype == 'object':
+                df[c] = round(float(df[c].as_matrix()[0]), 1)
 
         if 'random' in df.columns:
             df.drop(['random'], axis=1, inplace=True)
@@ -157,13 +156,22 @@ def index():
             df.drop(['onehot'], axis=1, inplace=True)
 
     result = mdl.predict(df) if (mdl is not None and df is not None) else None
-    result_name = (cls_info['names'][result[0]] if result[0] in cls_info else cls_info['names'][str(result[0])]) \
-        if result is not None else None
-    result_img = (cls_info['images'][result[0]] if result[0] in cls_info else cls_info['images'][str(result[0])]) \
-        if result is not None else None
-    result_descr = (cls_info['descriptions'][result[0]] if result[0] in cls_info
-                    else cls_info['descriptions'][str(result[0])]) \
-        if result is not None else None
+    result_name = result_img = result_descr = None
+    if(not cls_info['is_regressor'] if 'is_regressor' in cls_info else True):
+
+        if 'images' in cls_info:
+            for im in cls_info['images'].values():
+                BFR(MODEL_BUCKET, im, path.join(model_folder, 'images', im))
+
+        result_name = (cls_info['names'][result[0]] if result[0] in cls_info['names']
+            else cls_info['names'][str(result[0])]) if result is not None else None
+        result_img = (cls_info['images'][result[0]] if result[0] in cls_info['images']
+            else cls_info['images'][str(result[0])]) if result is not None else None
+        result_descr = (cls_info['descriptions'][result[0]] if result[0] in cls_info['descriptions']
+            else cls_info['descriptions'][str(result[0])]) if result is not None else None
+    else:
+        result_descr = (cls_info['result_text'] % (str(result[0]),) if 'result_text' in cls_info else str(result[0])) \
+             if result is not None else None
 
     return render_template('index.html',
                            headerized_class="non-headerized",
