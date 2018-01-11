@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 # Classes info example: Agro Model
 
 import pickle

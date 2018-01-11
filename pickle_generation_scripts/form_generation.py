@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 # Form generation example: Agro Model
 
 import pickle
