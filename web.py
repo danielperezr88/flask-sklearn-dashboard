@@ -109,6 +109,7 @@ def root():
 
 
 @app.route('/index', methods=['GET', 'POST'])
+@nocache
 def index():
     #if (not session['logged_in']) if 'logged_in' in session.keys() else True:
     #    return redirect('/login')
@@ -192,6 +193,7 @@ def login():
     return render_template('login.html', headerized_class="non-headerized")
 """
 
+
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html', headerized_class="non-headerized")
@@ -208,6 +210,7 @@ def logout():
     session['logged_in'] = False
     return redirect(url_for('login'))
 """
+
 
 @app.errorhandler(401)
 def void_or_nonexistent_term(e):
