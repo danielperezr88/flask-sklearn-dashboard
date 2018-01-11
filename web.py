@@ -12,7 +12,7 @@ import inspect
 
 import logging
 
-from utils import refresh_and_retrieve_module, BucketedFileRefresher
+from utils import refresh_and_retrieve_module, BucketedFileRefresher, nocache
 
 from sklearn.externals import joblib
 import pandas as pd
@@ -84,7 +84,7 @@ app = Flask(__name__, static_folder='browser/static', template_folder='browser/t
 app.config['model_folder'] = 'model'
 
 MY_IP = req.get(generate_url('jsonip.com')).json()['ip']
-PORT = 88
+PORT = 80
 
 ID_BUCKET = 'ids'
 MODEL_BUCKET = 'scikit-learn-models'
@@ -103,15 +103,15 @@ def model(filename):
 
 @app.route('/', methods=['GET'])
 def root():
-    if (not session['logged_in']) if 'logged_in' in session.keys() else True:
-        return redirect('/login')
+    #if (not session['logged_in']) if 'logged_in' in session.keys() else True:
+    #    return redirect('/login')
     return redirect('/index')
 
 
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    if (not session['logged_in']) if 'logged_in' in session.keys() else True:
-        return redirect('/login')
+    #if (not session['logged_in']) if 'logged_in' in session.keys() else True:
+    #    return redirect('/login')
 
     mdl = refresh_and_retrieve_pickle('model.pkl', bucket=MODEL_BUCKET, subfolder=model_folder, use_joblib=True)
     cls_info = refresh_and_retrieve_pickle('classes_info.pkl', bucket=MODEL_BUCKET, subfolder=model_folder)
@@ -170,7 +170,7 @@ def index():
                            result_descr=result_descr
                            )
 
-
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -190,7 +190,7 @@ def login():
             return render_template('login.html', headerized_class="non-headerized")
         flash('Unknown username', 'bad_login')
     return render_template('login.html', headerized_class="non-headerized")
-
+"""
 
 @app.route('/about', methods=['GET'])
 def about():
@@ -201,13 +201,13 @@ def about():
 def heartbeat():
     return 'beating', 200
 
-
+"""
 @app.route('/logout', methods=['GET'])
 def logout():
     del session['username']
     session['logged_in'] = False
     return redirect(url_for('login'))
-
+"""
 
 @app.errorhandler(401)
 def void_or_nonexistent_term(e):
