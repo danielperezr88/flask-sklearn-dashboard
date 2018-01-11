@@ -4,20 +4,21 @@
     <img src="" style="float: right;height: 46px;padding: 21px 21px 0 0;">
     <ul id="header-nav">
       <li>
-        <a href="{% if session.logged_in %}index{% else %}login{% endif %}" id="head-main">
+        <a href="{# {% if session.logged_in %} #}index{# {% else %}login{% endif %} #}" id="head-main">
           <h1>Smart Agro Classifier</h1>
           <p>for terrain use optimization</p>
         </a>
       </li>
       <li>
         <ul id="nav">
+          {#
           {% if not session.logged_in %}
             <li><a href="{{ url_for('login') }}">Login</a>
             <li><a href="{{ url_for('about') }}">About Us</a></li>
-          {% else %}
+          {% else %} #}
             <li><a href="{{ url_for('about') }}">About Us</a></li>
-            <li><a href="{{ url_for('logout') }}">Log out</a></li>
-          {% endif %}
+            {# <li><a href="{{ url_for('logout') }}">Log out</a></li> #}
+          {# {% endif %} #}
         </ul>
       </li>
       <li id="more-wrapper">
