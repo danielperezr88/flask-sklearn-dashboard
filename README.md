@@ -1,11 +1,21 @@
 Flask's scikit-learn web-based dashboard
 ========================================
+Flask rapid prototyping framework for one-page scientific Heroku-ready webapps. It relies on joblib's model
+dump capacity and given a set of field names, data-types and some other optional data, constructs a simple
+AJAX form for querying the model with user data.
 
-Testado en las siguientes versiones de python
----------------------------------------------
+::
+
+  SCOPE:     [New Product Development]
+  TARGET:    [Rapid Prototyping]
+  STATUS:    [Production Ready]
+
+  
+Tested with
+-----------
 * Python 3.4
 
-Dependencias
+Dependencies
 ------------
 * Flask
 * scikit-learn
@@ -13,11 +23,11 @@ Dependencias
 * requests
 * redis
  
- Modo de uso (ejemplos en la carpeta "pickle_generation_scripts")
- ----------------------------------------------------------------
- * Introducir en la carpeta "model", los archivos:
-    - __model.pkl__ - pickle del modelo de scikit-learn a evaluar, generado con la función "dump" de joblib)
-    - __classes_info.pkl__ - pickle para la visualización de los resultados con la siguiente estructura:
+ Way of use (examples in "pickle_generation_scripts" folder)
+ -----------------------------------------------------------
+ * Put the following files into "model" folder:
+    - __model.pkl__ - pickle file for our scikit-learn model, generated with joblib's "dump" function.
+    - __classes_info.pkl__ - pickle file for result visualization configuration, with the following structure:
     
     
             {
@@ -40,7 +50,7 @@ Dependencias
                     'class n id': 'class n description'        
                 }
             }
-   - __form_fields.pkl__ - pickle para la construcción del formulario con la siguiente estructura:
+   - __form_fields.pkl__ - pickle for form fields configuration, with the following structure:
             
             [
                 {'id':'a_field_input','name':'c','type':'text','label':'A Field','placeholder':'Write some text here...'},
@@ -52,4 +62,7 @@ Dependencias
                 ]}
                 ...
             ]
-   
+
+Notes:
+------
+This project is Heroku-ready by Docker containerization, and supports xgboost-based scikit-learn models.
