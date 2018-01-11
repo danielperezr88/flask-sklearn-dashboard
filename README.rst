@@ -26,6 +26,7 @@ Dependencies
 Way of use (examples in "pickle_generation_scripts" folder)
 -----------------------------------------------------------
 * Put the following files into "model" folder:
+
   - __model.pkl__ - pickle file for our scikit-learn model, generated with joblib's "dump" function.
   - __classes_info.pkl__ - pickle file for result visualization configuration, with the following structure:
     
