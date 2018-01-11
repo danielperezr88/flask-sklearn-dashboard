@@ -18,7 +18,7 @@ from sklearn.externals import joblib
 import pandas as pd
 import pickle
 
-__author__ = "Daniel Pérez"
+__author__ = "dperez"
 __email__ = "dperez@human-forecast.com"
 
 
