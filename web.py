@@ -82,6 +82,8 @@ def run():
 # Flask Web server
 app = Flask(__name__, static_folder='browser/static', template_folder='browser/templates')
 app.config['model_folder'] = 'model'
+app.config['frontend_title'] = 'Concrete Compression Model'
+app.config['frontend_subtitle'] = 'for a better operational planning'
 
 MY_IP = req.get(generate_url('jsonip.com')).json()['ip']
 PORT = 80

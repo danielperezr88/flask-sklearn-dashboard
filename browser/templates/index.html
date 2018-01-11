@@ -5,8 +5,8 @@
     <ul id="header-nav">
       <li>
         <a href="{# {% if session.logged_in %} #}index{# {% else %}login{% endif %} #}" id="head-main">
-          <h1>Concrete Compression Model</h1>
-          <p>for a better operational planning</p>
+          <h1>{{ config.frontend_title }}</h1>
+          <p>{{ config.frontend_subtitle }}</p>
         </a>
       </li>
       <li>
@@ -45,7 +45,7 @@
       <div id="form-inner-wrapper">
         <div id="breadcrumbs" class="{{ headerized_class or "headerized" }}">
           {% block breadcrumbs %}
-            <span onclick="window.location.href='/index'">Smart Agro Classifier</span><nobr>></nobr>
+            <span onclick="window.location.href='/index'">{{ config.frontend_title }}</span><nobr>></nobr>
             <span onclick="window.location.href='/index'">index</span>
           {% endblock %}
         </div>
