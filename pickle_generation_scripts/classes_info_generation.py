@@ -3,10 +3,11 @@
 # Classes info example: Agro Model
 
 import pickle
+from os import path
 import numpy as np
 
 # All fields are mandatory
-with open('../model/classes_info.pkl', 'wb') as fp:
+with open(path.join('..','model','classes_info.pkl'), 'wb') as fp:
     pickle.dump(dict(
             is_regressor=True,
             in_dtypes=[np.float32,np.float32,np.float32,np.float32,np.float32,np.float32,np.float32,np.float32],

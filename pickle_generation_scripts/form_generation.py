@@ -3,8 +3,9 @@
 # Form generation example: Agro Model
 
 import pickle
+from os import path
 
-with open('../model/form_field.pkl', 'wb') as fp:
+with open(path.join('..','model','form_field.pkl'), 'wb') as fp:
     pickle.dump([
             dict(id='Cement',name='Cement',type='number',label='Cement (Kg/m3)',step=.1,value=300.,min=100.,max=550.),
             dict(id='Blast_Furnace_Slag',name='Blast_Furnace_Slag',type='number',label='Blast Furnace Slag (Kg/m3)',step=.1,value=180.,min=0.,max=360.),
