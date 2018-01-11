@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 from flask import Flask, render_template, redirect, url_for, g, abort, session, request, flash, send_from_directory
 import werkzeug.exceptions as ex
 

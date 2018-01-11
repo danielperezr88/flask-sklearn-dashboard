@@ -1,4 +1,5 @@
-# -*- coding: UTF-8 -*-
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 from sys import modules
 from glob import glob
 from os import path, remove, close, getpid, makedirs
