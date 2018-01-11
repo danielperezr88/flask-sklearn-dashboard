@@ -3,5 +3,6 @@
 # Model pickle example: Agro Model
 
 from sklearn.externals import joblib
+from os import path
 
-joblib.dump(my_sklear_model, 'model.pkl')
+joblib.dump(my_sklearn_model, path.join('..','model','model.pkl'))

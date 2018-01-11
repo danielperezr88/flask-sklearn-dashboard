@@ -156,6 +156,7 @@ def index():
             df.drop(['onehot'], axis=1, inplace=True)
 
     result = mdl.predict(df) if (mdl is not None and df is not None) else None
+
     result_name = result_img = result_descr = None
     if(not cls_info['is_regressor'] if 'is_regressor' in cls_info else True):
 

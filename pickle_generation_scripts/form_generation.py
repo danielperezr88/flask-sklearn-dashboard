@@ -3,6 +3,7 @@
 # Form generation example: Agro Model
 
 import pickle
+from os import path
 
 soiltypes = {
     "1": "Cathedral family - Rock outcrop complex, extremely stony.",
@@ -47,7 +48,7 @@ soiltypes = {
     "40": "Moran family - Cryorthents - Rock land complex, extremely stony."
 }
 
-with open('form_field.pkl', 'wb') as fp:
+with open(path.join('..','model','form_field.pkl'), 'wb') as fp:
     pickle.dump([
             dict(id='Elevation',name='Elevation',type='number',label='Elevation',value=2500,min=1859,max=3858),
             dict(id='Aspect',name='Aspect',type='number',label='Aspect',value=0,min=0,max=360),

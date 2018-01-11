@@ -3,6 +3,7 @@
 # Classes info example: Agro Model
 
 import pickle
+from os import path
 
 names = ['Romana',
  'Iceberg',
@@ -38,7 +39,7 @@ descriptions = ['Alargada y de hoja no muy apretada al tronco. ',
  'Cierto sabor picante, combina con otras lechugas más suaves.']
 
 # All fields are mandatory
-with open('classes_info.pkl', 'wb') as fp:
+with open(path.join('..','model','classes_info.pkl'), 'wb') as fp:
     pickle.dump(dict(
             names={
                 '1': names[0],
